@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import Hangman from './Hangman';
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import img0 from './0.jpg';
-import img1 from './1.jpg';
+
 
 //smoke test
 it('renders without crashing', () => {
@@ -25,7 +24,7 @@ it('changes state and re-renders after correct guess', () => {
     wrapper.find("button[value='a']").simulate('click', {target: { value: "a"}});
 
     let image = wrapper.find('img').first();
-    expect(image.equals(<img src={ img0 } />)).toEqual(true);
+    expect(image.equals(<img src='0.jpg'  />)).toEqual(true);
 
     let hangmanWord = wrapper.find('p[className="Hangman-word"]');
     expect(hangmanWord.equals(<p className="Hangman-word">a____</p>)).toEqual(true);
@@ -37,9 +36,27 @@ it('changes state and re-renders after wrong guess', () => {
     wrapper.find("button[value='b']").simulate('click', {target: { value: "b"}});
 
     let image = wrapper.find('img').first();
-    expect(image.equals(<img src={ img1 } />)).toEqual(true);
+    expect(image.equals(<img src='1.jpg' />)).toEqual(true);
 
     let hangmanWord = wrapper.find('p[className="Hangman-word"]');
     expect(hangmanWord.equals(<p className="Hangman-word">_____</p>)).toEqual(true);
 });
+
+it('shows endgame screen when maxGuesses is reached', () => {
+    let wrapper = mount(<Hangman />);
+
+    wrapper.setState({nWrong: wrapper.props().maxWrong});
+
+    let image = wrapper.find('img').first();
+    expect(image.equals(<img src='6.jpg' />)).toEqual(true);
+
+    let button = wrapper.find('button').first();
+    expect(button.exists()).toBe(false);
+
+    let word = wrapper.find('p[className="Hangman-word"]');
+    expect(word.equals(<p className="Hangman-word">{wrapper.state().answer}</p>)).toEqual(true);
+
+    expect(wrapper.html()).toContain("You Lose");
+
+})
 
